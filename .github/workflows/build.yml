@@ -1,145 +1,46 @@
-# .github/workflows/build.yml
-# ─────────────────────────────────────────────────────────────
-# CI – Build NextStep APK
-#
-# What this workflow does:
-#   1. Triggers on every push to any branch and on every pull
-#      request targeting the main/master branch.
-#   2. Checks out the code on a GitHub-hosted Ubuntu runner.
-#   3. Sets up JDK 17 (required by AGP 8.x and Kotlin 1.9).
-#   4. Caches the Gradle home directory so dependency downloads
-#      are skipped on subsequent runs (saves ~2 min per build).
-#   5. Grants execute permission to the Gradle wrapper script.
-#   6. Runs the assembleDebug Gradle task to produce a debug APK.
-#      (A debug APK is signed with a debug keystore automatically
-#       by the Android Gradle Plugin – no secrets needed.)
-#   7. Uploads the resulting APK as a downloadable workflow
-#      artifact so teammates can install it directly from the
-#      GitHub Actions run page.
-#
-# To download the APK:
-#   GitHub → Actions → select a run → scroll to "Artifacts"
-#   → click "nextstep-debug-apk"
-#
-# Release APK (Play Store):
-#   Release signing requires a keystore uploaded as a GitHub
-#   secret. See the commented-out "release" job below for a
-#   starting point when you are ready for that step.
-# ─────────────────────────────────────────────────────────────
+name: Build Debug APK
 
-name: Build APK
-
-# ── Triggers ──────────────────────────────────────────────────
 on:
-  # Run on every push to any branch so every commit is verified
-  push:
-    branches:
-      - '**'
-  # Run on pull requests so reviewers can see build status
   pull_request:
-    branches:
-      - main
-      - master
+    branches: [main]
+  push:
+    branches: [main]
 
-# ── Concurrency ───────────────────────────────────────────────
-# Cancel any in-progress run for the same branch/PR when a new
-# commit is pushed. This prevents queuing up stale builds and
-# wasting runner minutes.
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
-# ── Jobs ──────────────────────────────────────────────────────
 jobs:
   build-debug:
-    name: Build Debug APK
-    # Use the latest Ubuntu LTS runner (free for public repos)
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
-      # ── Step 1: Check out the source code ─────────────────
-      # fetch-depth: 0 pulls the full history so version-name
-      # scripts based on git tags work correctly.
-      - name: Check out repository
+      - name: Checkout
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      # ── Step 2: Set up Java 17 ─────────────────────────────
-      # AGP 8.x requires JDK 17. We use the Temurin (Eclipse
-      # Adoptium) distribution which is free and well-maintained.
-      # cache: 'gradle' tells the action to also cache the
-      # Gradle wrapper download (~100 MB) alongside the JDK.
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'gradle'
 
-      # ── Step 3: Cache Gradle dependencies ─────────────────
-      # The Gradle home cache stores downloaded JARs/AARs.
-      # On a cache hit the dependency-resolution phase is
-      # skipped entirely, cutting build time by ~2 minutes.
-      #
-      # Cache key: hash of all *.gradle* files + version catalog.
-      # If any dependency version changes the cache is busted
-      # and a fresh download occurs.
-      - name: Cache Gradle packages
+      - name: Cache Gradle
         uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
 
-      # ── Step 4: Make gradlew executable ───────────────────
-      # Git does not always preserve the executable bit for
-      # gradlew on Windows contributors' machines. This step
-      # ensures the script can be run on the Linux runner.
       - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
+        run: chmod +x gradlew
 
-      # ── Step 5: Build the debug APK ───────────────────────
-      # assembleDebug:
-      #   - Compiles all Kotlin sources
-      #   - Runs KSP processors (Room DAOs + Hilt components)
-      #   - Packages resources and the DEX files
-      #   - Signs the APK with the auto-generated debug keystore
-      #
-      # --stacktrace: prints the full exception trace if the
-      # build fails, making CI failures much easier to debug.
-      #
-      # --no-daemon: GitHub runners are ephemeral; using the
-      # Gradle daemon would waste startup time with no reuse
-      # benefit across jobs.
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace --no-daemon
+        run: ./gradlew assembleDebug --no-daemon
 
-      # ── Step 6: Upload the APK artifact ───────────────────
-      # Makes the APK downloadable from the GitHub Actions UI
-      # for 7 days. Anyone with read access to the repo can
-      # download and sideload the build to test it.
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: nextstep-debug-apk
-          # The debug APK is always placed here by AGP
-          path: app/build/outputs/apk/debug/app-debug.apk
-          # Keep the artifact for 7 days (free storage limit)
-          retention-days: 7
-
-      # ── Step 7: Upload unit-test results (always) ─────────
-      # Uploads JUnit XML reports so GitHub can display a test
-      # summary even when some tests fail.
-      # "if: always()" ensures this runs even after a failure
-      # in the build step so we never lose test output.
-      - name: Upload unit test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: unit-test-results
-          path: app/build/test-results/testDebugUnitTest/
+          name: focus-debug-${{ github.run_number }}
+          path: app/build/outputs/apk/debug/*.apk
           retention-days: 7
