@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    AndroidManifest.xml
+    ─────────────────────────────────────────────────────────
+    Every Android app must have a manifest file.  It tells
+    the Android OS:
+      • The app's package name (applicationId)
+      • Which permissions the app needs
+      • The Application class (our custom NextStepApp)
+      • Which Activity is the entry point
+      • Metadata used by libraries (e.g. Hilt)
+
+    Note: permissions NOT listed here will be silently denied
+    by the OS even if you call requestPermissions() at runtime.
+    ─────────────────────────────────────────────────────────
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        INTERNET permission – required if you ever add
+        Firebase or AdMob.  Room / offline features work
+        without it, but declaring it now avoids a manifest
+        merge conflict when Firebase is added later.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!--
+        ACCESS_NETWORK_STATE – lets the app check whether a
+        network connection is available before attempting
+        any online sync.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:name=".NextStepApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.NextStep"
+        android:hardwareAccelerated="true">
+
+        <!--
+            MainActivity is the ONE activity in this app.
+            Compose navigation renders all screens as
+            composables inside this single activity
+            (Single-Activity Architecture).
+        -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.NextStep.SplashScreen">
+
+            <!-- Makes this the launcher activity (home screen icon) -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

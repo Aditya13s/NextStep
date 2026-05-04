@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    res/xml/backup_rules.xml
+    ─────────────────────────────────────────────────────────
+    Android Auto Backup rules (Android 12+ / API 31+).
+    These rules control which files are included in the
+    cloud backup made to the user's Google account.
+
+    We exclude the Room database because:
+      1. It's re-seeded automatically on every install.
+      2. User progress data (streak, completed tasks) is
+         personal and should not roam between devices
+         without explicit user consent in a future version.
+    ─────────────────────────────────────────────────────────
+-->
+<full-backup-content>
+    <!-- Exclude the entire Room database directory -->
+    <exclude
+        domain="database"
+        path="." />
+    <!-- Exclude DataStore preferences -->
+    <exclude
+        domain="sharedpref"
+        path="." />
+</full-backup-content>
