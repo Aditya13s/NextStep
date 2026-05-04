@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    res/values/themes.xml
+    ─────────────────────────────────────────────────────────
+    Defines the base Android themes used for:
+      1. The regular app theme (Material3 / Compose-compatible)
+      2. The splash screen theme (shown before setContent)
+
+    Note: In a fully Compose-based app the theme is mostly
+    defined in Kotlin (Theme.kt / MaterialTheme).  These XML
+    themes only exist for:
+      • The splash screen (Android 12+ API requires an XML theme)
+      • The windowBackground attribute (avoids a white flash
+        before Compose renders its first frame)
+    ─────────────────────────────────────────────────────────
+-->
+<resources>
+
+    <!--
+        Base app theme.
+        parent="Theme.Material3.DayNight.NoActionBar":
+          • Material3 – compatible with Jetpack Compose
+          • DayNight  – automatically switches between light
+                        and dark based on system setting
+          • NoActionBar – removes the legacy ActionBar; we
+                          use Compose TopAppBar instead
+    -->
+    <style name="Theme.NextStep" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Window background matches the Compose background
+             to prevent a flash during startup -->
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+
+    <!--
+        Splash screen theme.
+        Applied to MainActivity via android:theme in the manifest.
+        The SplashScreen API reads windowSplashScreenBackground
+        and windowSplashScreenAnimatedIcon from this theme.
+
+        After the first frame is drawn, MainActivity calls
+        installSplashScreen() which transitions from this
+        theme to Theme.NextStep automatically.
+    -->
+    <style name="Theme.NextStep.SplashScreen" parent="Theme.SplashScreen">
+        <!-- Background colour of the splash screen -->
+        <item name="windowSplashScreenBackground">#3F51B5</item>
+
+        <!--
+            Icon shown in the centre of the splash screen.
+            Replace with a real adaptive icon once you have
+            brand assets.
+        -->
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
+
+        <!--
+            The theme to switch to after the splash screen
+            dismisses (must match the app's real theme).
+        -->
+        <item name="postSplashScreenTheme">@style/Theme.NextStep</item>
+    </style>
+
+</resources>

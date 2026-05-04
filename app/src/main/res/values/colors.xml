@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    res/values/colors.xml
+    ─────────────────────────────────────────────────────────
+    XML colour resources used by:
+      • The adaptive launcher icon background
+      • The splash screen background
+      • Any remaining View-based UI (e.g. the legacy splash
+        window background)
+
+    The primary Compose colours live in Color.kt.  We only
+    duplicate the brand primary here because it's referenced
+    by the XML theme files.
+    ─────────────────────────────────────────────────────────
+-->
+<resources>
+    <!-- Brand primary – must match PrimaryIndigo in Color.kt -->
+    <color name="ic_launcher_background">#3F51B5</color>
+    <color name="ic_launcher_foreground">#FFFFFF</color>
+</resources>

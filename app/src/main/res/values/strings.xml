@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    res/values/strings.xml
+    ─────────────────────────────────────────────────────────
+    All user-facing string resources for the app.
+
+    WHY strings.xml?
+      • Centralises all text so copy-editing is easy.
+      • Required for localisation (adding Hindi, Spanish, etc.
+        means creating res/values-hi/strings.xml with
+        translations – the code never changes).
+      • Android Lint warns if you hardcode strings in XML or
+        Kotlin instead of using @string/ references.
+    ─────────────────────────────────────────────────────────
+-->
+<resources>
+    <!-- App name shown in the launcher and recent apps -->
+    <string name="app_name">NextStep</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome">Welcome to NextStep</string>
+    <string name="onboarding_subtitle">Stop overthinking. Do one thing today.</string>
+    <string name="onboarding_goal_heading">What do you want to improve?</string>
+    <string name="onboarding_level_heading">Your current level?</string>
+    <string name="onboarding_cta">Let\'s Go! 🚀</string>
+
+    <!-- Home screen -->
+    <string name="home_title">Today\'s Step</string>
+    <string name="home_mark_done">Mark as Done ✓</string>
+    <string name="home_completed">Completed! Come back tomorrow 🌟</string>
+    <string name="home_plan_complete">You\'ve completed all 30 days!</string>
+
+    <!-- Progress screen -->
+    <string name="progress_title">Your Progress</string>
+    <string name="progress_history">Task History</string>
+    <string name="progress_empty">No completed tasks yet.\nGo do Day 1! 💪</string>
+
+    <!-- Profile screen -->
+    <string name="profile_title">Profile</string>
+    <string name="profile_save">Save Changes</string>
+    <string name="profile_saved">Profile saved! ✅</string>
+    <string name="profile_goal_reset_warning">Changing your goal will reset your plan to Day 1.</string>
+
+    <!-- Streak -->
+    <string name="streak_bronze">Bronze 🥉</string>
+    <string name="streak_silver">Silver 🥈</string>
+    <string name="streak_gold">Gold 🥇</string>
+    <string name="streak_none">No streak yet</string>
+
+    <!-- Accessibility -->
+    <string name="cd_streak_fire">Streak fire icon</string>
+    <string name="cd_task_done">Task completed checkmark</string>
+    <string name="cd_timer">Duration timer icon</string>
+    <string name="cd_profile">Profile</string>
+</resources>
